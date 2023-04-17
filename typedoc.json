@@ -1,0 +1,13 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "name": "TS Library",
+  "includeVersion": true,
+  "out": ".docs",
+  "entryPoints": ["./src"],
+  "darkHighlightTheme": "dark-plus",
+  "lightHighlightTheme": "dark-plus",
+  "validation": {
+    "invalidLink": true,
+    "notExported": true
+  }
+}

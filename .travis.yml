@@ -1,0 +1,53 @@
+language: node_js
+node_js:
+  - "16"
+stages:
+  - Code Quality
+  - Unit Tests
+  - Integration Tests
+  # - Package Release
+  # - Documentation Release
+
+script: skip
+
+jobs:
+  include:
+    - stage: Code Quality
+      if: branch = main OR type = pull_request
+      script: yarn lint
+    - stage: Unit Tests
+      if: branch = main OR type = pull_request
+      before_install: yarn global add codecov
+      script: yarn test --coverage
+      after_success: codecov
+    - stage: Integration Tests
+      if: branch = main OR type = pull_request
+      script: yarn test:integration
+    # - stage: Package Release
+    #   if: tag =~ /^v[0-9]+(\.[0-9]+){2,3}(-alpha|-beta|-rc)?$/
+    #   script: yarn build
+    #   deploy:
+    #     edge: true
+    #     provider: npm
+    #     cleanup: false
+    #     email: $NPM_EMAIL
+    #     api_key: $NPM_TOKEN
+    #     access: public
+    #     on:
+    #       tags: true
+    # - stage: Documentation Release
+    #   if: tag =~ /^v[0-9]+(\.[0-9]+){2,3}(-alpha|-beta|-rc)?$/
+    #   script: yarn docs
+    #   deploy:
+    #     provider: pages
+    #     skip_cleanup: true
+    #     keep_history: true
+    #     local_dir: .docs/
+    #     github_token: $GITHUB_TOKEN
+    #     on:
+    #       tags: true
+
+cache:
+  yarn: true
+notifications:
+  email: false
