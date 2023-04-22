@@ -11,7 +11,7 @@
   "separator": "/",
   "maxSections": 2,
   "regularExpressions": [
-    "^[a-z0-9]{2,}(-[a-z0-9]{1,})*$"
+    "[a-z0-9]{2,}(-[a-z0-9]{1,})*$"
   ],
   "msgSeperatorRequired": "Branch name [%s] must contain a seperator %s.",
   "msgRegexNotMatched": "Branch name [%s] is not allowed. Example: my-feature-1",
