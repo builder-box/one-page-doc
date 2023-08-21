@@ -1,0 +1,118 @@
+name: Continuos Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-node-module-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('**/package.json') }}
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --ignore-scripts
+  code_quality:
+    name: Code Quality
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        id: setup-node
+        with:
+          node-version: 16.x
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: node-cache
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-node-module-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('**/package.json') }}
+      - name: Install Dependencies
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile --ignore-scripts
+      - name: Audit Report
+        run: yarn audit --level critical --groups dependencies
+      - name: Linter Report
+        run: yarn lint
+  unit_test:
+    needs: code_quality
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        id: setup-node
+        with:
+          node-version: 16.x
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: node-cache
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-node-module-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('**/package.json') }}
+      - name: Install Dependencies
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile --ignore-scripts
+      - run: yarn test --coverage --ci
+  integration_test:
+    needs: unit_test
+    name: Integration Tests Node:${{ matrix.node-version }} OS:${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.allow_failures }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        node-version: [16.x, 18.x]
+        allow_failures: [false]
+        include:
+          - node-version: 20.x
+            os: ubuntu-latest
+            allow_failures: true
+          - node-version: 20.x
+            os: windows-latest
+            allow_failures: true
+          - node-version: 20.x
+            os: macos-latest
+            allow_failures: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: node-cache
+        with:
+          path: ./node_modules
+          key: ${{ matrix.os }}-node-module-${{ matrix.node-version }}-${{ hashFiles('**/package.json') }}
+      - name: Install Dependencies
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile --ignore-scripts
+      - run: yarn test:integration
+  build_test:
+    needs: integration_test
+    name: Build Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        id: setup-node
+        with:
+          node-version: 16.x
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --ignore-scripts --prod
+      - run: yarn global add rimraf typescript --frozen-lockfile --ignore-scripts
+      - name: Build Library
+        run: yarn build
