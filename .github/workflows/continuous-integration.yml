@@ -65,6 +65,10 @@ jobs:
         if: steps.node-cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile --ignore-scripts
       - run: yarn test --coverage --ci
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   integration_test:
     needs: unit_test
     name: Integration Tests Node:${{ matrix.node-version }} OS:${{ matrix.os }}
