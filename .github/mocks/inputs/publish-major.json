@@ -1,0 +1,9 @@
+{
+  "action": "workflow_dispatch",
+  "inputs": {
+    "release": "patch",
+    "pre_release": "beta",
+    "meta": "",
+    "changelog": "[\"change one\", \"change two\"]"
+  }
+}

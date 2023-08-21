@@ -1,5 +1,5 @@
 # One Page Documentation
 
-[![Build Status](https://app.travis-ci.com/ElMijo/ts-library.svg?branch=main)](https://app.travis-ci.com/ElMijo/ts-library) [![codecov](https://codecov.io/gh/ElMijo/ts-library/branch/main/graph/badge.svg?token=8DfGB9WxYx)](https://codecov.io/gh/ElMijo/ts-library)
+[![Continuos Integration](https://github.com/builder-box/one-page-doc/actions/workflows/continuous-integration.svg?branch=main)](https://github.com/builder-box/one-page-doc/actions/workflows/continuous-integration.yml) [![codecov](https://codecov.io/gh/builder-box/one-page-doc/graph/badge.svg?token=WSU424H7ZQ)](https://codecov.io/gh/builder-box/one-page-doc)
 
 One Page Documentation is an Open Source project to help you to generate a completely markdown documentation in a single page

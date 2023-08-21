@@ -31,4 +31,4 @@ yarn test:integration
 yarn build
 ```
 
-- Finally send a [GitHub Pull Request](https://github.com/ElMijo/ts-library/compare/main...ElMijo:main) with a clear list of what you've done (read more [about pull requests](https://help.github.com/articles/about-pull-requests/)). Make sure all of your commits are atomic (one feature per commit).
+- Finally send a [GitHub Pull Request](https://github.com/builder-box/ts-library/compare/main...builder-box:main) with a clear list of what you've done (read more [about pull requests](https://help.github.com/articles/about-pull-requests/)). Make sure all of your commits are atomic (one feature per commit).

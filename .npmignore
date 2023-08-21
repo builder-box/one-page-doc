@@ -5,7 +5,9 @@
 .prettierrc
 .branchlintrc
 .coverage
+.github
 .vscode
+.nvmrc
 __tests__
 tsconfig.json
 src
@@ -18,3 +20,5 @@ typedoc.json
 .husky
 CHANGELOG.md
 CONTRIBUTING.md
+*-release.js
+ 

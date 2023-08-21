@@ -1,0 +1,59 @@
+name: Release a Package Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        type: choice
+        description: Release Semantic Version
+        required: true
+        default: patch
+        options:
+          - major
+          - minor
+          - patch
+          - no-release
+      pre_release:
+        type: choice
+        description: Pre Release Version
+        required: true
+        default: no-pre-release
+        options:
+          - alpha
+          - beta
+          - rc
+          - no-pre-release
+      meta:
+        type: string
+        description: "Release Metadata"
+        required: false
+        default: ""
+      changelog:
+        type: string
+        description: "Release changes"
+        required: false
+        default: "[]"
+jobs:
+  publish:
+    name: Publish Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          registry-url: "https://registry.npmjs.org"
+          scope: "@builder-box"
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --ignore-scripts --prod
+      - name: Install Global Dependencies
+        run: yarn global add rimraf typescript --frozen-lockfile --ignore-scripts
+      - name: Build Artifact
+        run: yarn build
+      - name: Prepare Release
+        run: yarn release ${{ github.event.inputs.release }} ${{ github.event.inputs.pre_release }} '${{ github.event.inputs.meta }}' '${{ github.event.inputs.changelog }}'
+      - name: Publish Release
+        run: yarn publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: yarn postpublish
